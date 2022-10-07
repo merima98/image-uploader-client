@@ -9,13 +9,21 @@ import {
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useDropzone, DropzoneOptions } from "react-dropzone";
+import { useMutation } from "react-query";
 
 import upload from "../../../images/upload.png";
 import noImageSelected from "../../../images/noImageSelected.png";
+import mutations from "../../../api/mutations/mutations";
 
 const ImageUploader = () => {
   const [image, setImage] = useState(null);
-  const onDrop = (files: File[], index: any, accordionIndex: any) => {
+  const processImageMutation = useMutation(mutations.processImage, {
+    onSuccess: (data) => {
+      console.log("Data is, ", data);
+    },
+  });
+
+  const onDrop = (files: File[]) => {
     const file = files[0];
     let fileReader = null as any;
     fileReader = new FileReader();
@@ -32,6 +40,14 @@ const ImageUploader = () => {
     onDrop,
   };
   const { getRootProps, getInputProps, open } = useDropzone(options);
+
+  const processImage = () => {
+    if (image) console.log("Image is, ", image);
+    if (image) {
+      console.log("Image that needs to be processed, ", image);
+      processImageMutation.mutate(image);
+    }
+  };
 
   return (
     <>
@@ -71,7 +87,11 @@ const ImageUploader = () => {
       </Container>
       {image && (
         <Center mb={5}>
-          <Button colorScheme="red" variant="outline">
+          <Button
+            colorScheme="red"
+            variant="outline"
+            onClick={() => processImage()}
+          >
             Process the image
           </Button>
         </Center>
