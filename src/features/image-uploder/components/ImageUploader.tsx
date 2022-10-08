@@ -42,11 +42,10 @@ const ImageUploader = () => {
   const { getRootProps, getInputProps, open } = useDropzone(options);
 
   const processImage = () => {
-    if (image) console.log("Image is, ", image);
-    if (image) {
-      console.log("Image that needs to be processed, ", image);
-      processImageMutation.mutate(image);
-    }
+    if (image)
+      if (image) {
+        processImageMutation.mutate(image);
+      }
   };
 
   return (

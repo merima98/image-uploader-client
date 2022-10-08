@@ -1,8 +1,11 @@
 import axios from "../../httpClient";
 
-function processImage(image: string) {
-    console.log('I am in process image api, ', image)
-    return axios.post(`/process-image`, image);
+function processImage(image: any) {
+    const imageContent = image.split('base64,');
+    const imageData = {
+        image: imageContent[1]
+    };
+    return axios.post(`/process-image`, imageData);
 }
 
 
