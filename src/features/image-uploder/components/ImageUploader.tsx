@@ -17,11 +17,7 @@ import mutations from "../../../api/mutations/mutations";
 
 const ImageUploader = () => {
   const [image, setImage] = useState(null);
-  const processImageMutation = useMutation(mutations.processImage, {
-    onSuccess: (data) => {
-      console.log("Data is, ", data);
-    },
-  });
+  const processImageMutation = useMutation(mutations.processImage);
 
   const onDrop = (files: File[]) => {
     const file = files[0];
@@ -54,29 +50,33 @@ const ImageUploader = () => {
         display={"flex"}
         flexDirection={"column"}
         justifyContent={"center"}
-        padding="4"
-        border="2px dashed rgba(0,0,0,0.1)"
+        pl={0}
+        pr={0}
+        pb={6}
+        pt={6}
+        backgroundColor={"white"}
+        border="2px dashed #E53E3E"
         alignItems="center"
         w={"80%"}
         borderRadius="md"
         maxW={"auto"}
-        mb={5}
+        mb={"100px"}
         mt={10}
         {...getRootProps()}
         zIndex={0}
       >
         <Flex alignItems={"center"}>
-          <Text color={"red.500"} fontWeight={"medium"}>
+          <Text color={"red.500"} fontSize={"24px"} fontWeight={"medium"}>
             {"Browse image or drag&drop image"}
           </Text>
           <Button
             _hover={{
-              background: "#fff",
+              background: "inherit",
             }}
             _focus={{
-              background: "#fff",
+              background: "inherit",
             }}
-            backgroundColor={"#fff"}
+            backgroundColor={"inherit"}
             onClick={open}
           >
             <Image src={upload} />
@@ -90,6 +90,14 @@ const ImageUploader = () => {
             colorScheme="red"
             variant="outline"
             onClick={() => processImage()}
+            mb={"50px"}
+            size={"lg"}
+            backgroundColor={"white"}
+            _hover={{
+              backgroundColor: "white",
+            }}
+            _focus={{ backgroundColor: "white" }}
+            _selected={{ backgroundColor: "white" }}
           >
             Process the image
           </Button>
@@ -109,6 +117,8 @@ const ImageUploader = () => {
             display={"flex"}
             src={noImageSelected}
             alt="preview"
+            height={"250px"}
+            width={"300px"}
             mt={10}
             mb={10}
           />
