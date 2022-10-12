@@ -6,6 +6,7 @@ import {
   Img,
   Flex,
   Center,
+  useToast,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useDropzone, DropzoneOptions } from "react-dropzone";
@@ -16,8 +17,20 @@ import noImageSelected from "../../../images/noImageSelected.png";
 import mutations from "../../../api/mutations/mutations";
 
 const ImageUploader = () => {
+  const toast = useToast();
   const [image, setImage] = useState(null);
-  const processImageMutation = useMutation(mutations.processImage);
+  const processImageMutation = useMutation(mutations.processImage, {
+    onSuccess: () => {
+      toast({
+        title: "Image processed.",
+        description: "Image processing is done!",
+        status: "info",
+        position: "top",
+        duration: 9000,
+        isClosable: true,
+      });
+    },
+  });
 
   const onDrop = (files: File[]) => {
     const file = files[0];
@@ -41,6 +54,14 @@ const ImageUploader = () => {
     if (image)
       if (image) {
         processImageMutation.mutate(image);
+        toast({
+          title: "Image processing.",
+          description: "Image processing is in the process.",
+          status: "success",
+          position: "top",
+          duration: 9000,
+          isClosable: true,
+        });
       }
   };
 
