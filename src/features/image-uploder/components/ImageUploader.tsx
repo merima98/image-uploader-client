@@ -12,6 +12,8 @@ import {
 import { useState } from "react";
 import { useDropzone, DropzoneOptions } from "react-dropzone";
 import { useMutation } from "react-query";
+import { motion } from "framer-motion";
+import { useMediaQuery } from "@react-hookz/web";
 
 import upload from "../../../images/upload.png";
 import noImageSelected from "../../../images/noImageSelected.png";
@@ -21,6 +23,9 @@ const ImageUploader = () => {
   const toast = useToast();
   const [image, setImage] = useState(null);
   const [isLoadingSpinnerActive, setIsLoadingSpinnerActive] = useState(false);
+  const isLargeDevice = useMediaQuery("only screen and (min-width: 80em)");
+  const boxProps = isLargeDevice ? { whileHover: { scale: 1.1 } } : {};
+
   const processImageMutation = useMutation(mutations.processImage, {
     onSuccess: () => {
       toast({
@@ -122,7 +127,7 @@ const ImageUploader = () => {
               >
                 Processing...
               </Text>
-              <Progress mb={2} w={"80%"} size="xs" isIndeterminate />
+              <Progress mb={5} w={"80%"} size="xs" isIndeterminate />
             </Flex>
           </Center>
         </Container>
@@ -130,6 +135,9 @@ const ImageUploader = () => {
       {image && !isLoadingSpinnerActive && (
         <Center mb={5}>
           <Button
+            as={motion.button}
+            {...boxProps}
+            whileTap={{ scale: 0.9 }}
             color={"gray.700"}
             colorScheme={"gray.700"}
             border={"1px solid #2D3748"}
