@@ -4,6 +4,7 @@ import {
   Container,
   Image,
   Img,
+  Progress,
   Flex,
   Center,
   useToast,
@@ -19,6 +20,7 @@ import mutations from "../../../api/mutations/mutations";
 const ImageUploader = () => {
   const toast = useToast();
   const [image, setImage] = useState(null);
+  const [isLoadingSpinnerActive, setIsLoadingSpinnerActive] = useState(false);
   const processImageMutation = useMutation(mutations.processImage, {
     onSuccess: () => {
       toast({
@@ -29,6 +31,7 @@ const ImageUploader = () => {
         duration: 9000,
         isClosable: true,
       });
+      setIsLoadingSpinnerActive(false);
     },
   });
 
@@ -59,9 +62,10 @@ const ImageUploader = () => {
           description: "Image processing is in the process.",
           status: "success",
           position: "top",
-          duration: 9000,
+          duration: 2000,
           isClosable: true,
         });
+        setIsLoadingSpinnerActive(true);
       }
   };
 
@@ -105,7 +109,25 @@ const ImageUploader = () => {
           <input name={"image"} {...getInputProps()} />
         </Flex>
       </Container>
-      {image && (
+      {isLoadingSpinnerActive && (
+        <Container>
+          <Center>
+            <Flex w={"100%"} flexDirection={"column"}>
+              <Text
+                mb={2}
+                color={"gray.700"}
+                fontWeight={"bold"}
+                fontSize={"24px"}
+                textAlign={"center"}
+              >
+                Processing...
+              </Text>
+              <Progress mb={2} w={"80%"} size="xs" isIndeterminate />
+            </Flex>
+          </Center>
+        </Container>
+      )}
+      {image && !isLoadingSpinnerActive && (
         <Center mb={5}>
           <Button
             color={"gray.700"}
