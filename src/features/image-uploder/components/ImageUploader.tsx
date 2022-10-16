@@ -8,16 +8,26 @@ import {
   Flex,
   Center,
   useToast,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+  ModalBody,
+  ModalFooter,
+  useDisclosure,
 } from "@chakra-ui/react";
 import { useState } from "react";
 import { useDropzone, DropzoneOptions } from "react-dropzone";
 import { useMutation } from "react-query";
 import { motion } from "framer-motion";
 import { useMediaQuery } from "@react-hookz/web";
+import React from "react";
 
 import upload from "../../../images/upload.png";
 import noImageSelected from "../../../images/noImageSelected.png";
 import mutations from "../../../api/mutations/mutations";
+import Table from "../../table/components/Table";
 
 const ImageUploader = () => {
   const toast = useToast();
@@ -25,18 +35,25 @@ const ImageUploader = () => {
   const [isLoadingSpinnerActive, setIsLoadingSpinnerActive] = useState(false);
   const isLargeDevice = useMediaQuery("only screen and (min-width: 80em)");
   const boxProps = isLargeDevice ? { whileHover: { scale: 1.1 } } : {};
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const [tableData, setTableData] = useState<any[]>([]);
 
   const processImageMutation = useMutation(mutations.processImage, {
-    onSuccess: () => {
+    onSuccess: (data) => {
       toast({
         title: "Image processed.",
         description: "Image processing is done!",
         status: "info",
         position: "top",
-        duration: 9000,
+        duration: 1000,
         isClosable: true,
       });
+      onOpen();
       setIsLoadingSpinnerActive(false);
+
+      let array = [];
+      array.push(data.data);
+      setTableData(array);
     },
   });
 
@@ -73,6 +90,36 @@ const ImageUploader = () => {
         setIsLoadingSpinnerActive(true);
       }
   };
+
+  const columns = React.useMemo(
+    () => [
+      {
+        Header: "Passport Number",
+        accessor: "Passport_Number",
+      },
+      {
+        Header: "First Name",
+        accessor: "First_Name",
+      },
+      {
+        Header: "Last Name",
+        accessor: "Last_Name",
+      },
+      {
+        Header: "Country Code",
+        accessor: "Country_Code",
+      },
+      {
+        Header: "Document Type",
+        accessor: "Document_Type",
+      },
+      {
+        Header: "Date Inserted",
+        accessor: "Date_Inserted",
+      },
+    ],
+    []
+  );
 
   return (
     <>
@@ -180,6 +227,40 @@ const ImageUploader = () => {
       <Container maxW={"auto"} display={"flex"} justifyContent={"center"}>
         {image && <Img display={"flex"} src={image} alt="preview" mb={10} />}
       </Container>
+      <>
+        <Modal isOpen={isOpen} onClose={onClose}>
+          <ModalOverlay />
+          <ModalContent maxW={"fit-content"}>
+            <ModalHeader fontSize={"16px"}>Processing output</ModalHeader>
+            <ModalCloseButton />
+            <ModalBody>
+              {tableData && <Table data={tableData} columns={columns} />}
+            </ModalBody>
+            <ModalFooter>
+              <Button
+                mr={3}
+                onClick={onClose}
+                as={motion.button}
+                {...boxProps}
+                whileTap={{ scale: 0.9 }}
+                color={"gray.700"}
+                colorScheme={"gray.700"}
+                border={"1px solid #2D3748"}
+                variant="outline"
+                size={"sm"}
+                backgroundColor={"white"}
+                _hover={{
+                  backgroundColor: "white",
+                }}
+                _focus={{ backgroundColor: "white" }}
+                _selected={{ backgroundColor: "white" }}
+              >
+                Close
+              </Button>
+            </ModalFooter>
+          </ModalContent>
+        </Modal>
+      </>
     </>
   );
 };
